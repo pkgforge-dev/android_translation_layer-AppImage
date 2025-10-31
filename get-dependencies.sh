@@ -36,12 +36,22 @@ sed -i \
 	/etc/makepkg.conf
 cat /etc/makepkg.conf
 
-git clone --depth 1 https://aur.archlinux.org/android_translation_layer-git.git ./android-layer
-(
-	cd ./android-layer
-	makepkg -fs --noconfirm
-	ls -la .
-	pacman --noconfirm -U ./*.pkg.tar.*
-)
+AURPKGS="
+	https://aur.archlinux.org/libopensles-standalone
+	https://aur.archlinux.org/skia-sharp-atl
+	https://aur.archlinux.org/android_translation_layer-git
+"
+
+for pkg in $AURPKGS; do
+	git clone --depth 1 "$pkg" ./"${pkg##*/}"
+		(
+			cd ./"${pkg##*/}"
+			sed -i -e "s|x86_64|$ARCH|g" ./PKGBUILD
+			cat ./PKGBUILD
+			makepkg -fs --noconfirm
+			ls -la .
+			pacman --noconfirm -U ./*.pkg.tar.*
+		)
+done
 
 pacman -Q android_translation_layer-git | awk '{print $2; exit}' > ~/version
