@@ -18,6 +18,7 @@ wget --retry-connrefused --tries=30 "$SHARUN" -O ./quick-sharun
 chmod +x ./quick-sharun
 ./quick-sharun \
 	/usr/bin/android-translation-layer \
+	/usr/lib/libOpenSLES.so*           \
 	/usr/lib/java/*                    \
 	/usr/lib/java/*/*                  \
 	/usr/lib/java/*/*/*                \
