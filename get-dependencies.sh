@@ -27,7 +27,7 @@ echo "Installing debloated packages..."
 echo "---------------------------------------------------------------"
 wget --retry-connrefused --tries=30 "$EXTRA_PACKAGES" -O ./get-debloated-pkgs.sh
 chmod +x ./get-debloated-pkgs.sh
-./get-debloated-pkgs.sh --add-opengl libxml2-mini opus-mini gdk-pixbuf2-mini
+./get-debloated-pkgs.sh --add-mesa libxml2-mini opus-mini gdk-pixbuf2-mini
 
 echo "Building android-translation-layer..."
 echo "---------------------------------------------------------------"
@@ -41,6 +41,7 @@ cat /etc/makepkg.conf
 AURPKGS="
 	https://aur.archlinux.org/libopensles-standalone
 	https://aur.archlinux.org/skia-sharp-atl
+	https://aur.archlinux.org/bsd-compat-headers
 	https://aur.archlinux.org/art_standalone
 	https://aur.archlinux.org/abionic_translation
 	https://aur.archlinux.org/android_translation_layer-git
