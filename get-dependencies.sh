@@ -41,7 +41,7 @@ cat /etc/makepkg.conf
 AURPKGS="
 	https://aur.archlinux.org/libopensles-standalone
 	https://aur.archlinux.org/skia-sharp-atl
-	https://aur.archlinux.org/aart_standalone
+	https://aur.archlinux.org/art_standalone
 	https://aur.archlinux.org/abionic_translation
 	https://aur.archlinux.org/android_translation_layer-git
 "
