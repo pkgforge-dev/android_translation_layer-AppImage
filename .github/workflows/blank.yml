@@ -31,7 +31,7 @@ jobs:
       run: /bin/sh ./get-dependencies.sh
 
     - name: Make AppImage
-      run: /bin/sh ./mednafen-appimage.sh
+      run: /bin/sh ./*-appimage.sh
     
     - name: Upload artifact
       uses: actions/upload-artifact@v4.6.2
