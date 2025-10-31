@@ -1,0 +1,70 @@
+name: Appimage
+concurrency:
+  group: build-${{ github.ref }}
+  cancel-in-progress: true
+
+on:
+  schedule:
+    - cron: "0 7 1/14 * *"
+  workflow_dispatch:
+  
+jobs:
+  build:
+    name: "${{ matrix.name }} (${{ matrix.arch }})"
+    runs-on: ${{ matrix.runs-on }}
+    strategy:
+      matrix:
+        include:
+          - runs-on: ubuntu-latest
+            name: Build AppImage
+            arch: x86_64
+          - runs-on: ubuntu-24.04-arm
+            name: Build AppImage
+            arch: aarch64
+    container:
+      image: ghcr.io/pkgforge-dev/archlinux:latest
+      options: --privileged --device /dev/fuse
+    steps:
+    - uses: actions/checkout@v5
+                      
+    - name: Get dependencies
+      run: /bin/sh ./get-dependencies.sh
+
+    - name: Make AppImage
+      run: /bin/sh ./mednafen-appimage.sh
+    
+    - name: Upload artifact
+      uses: actions/upload-artifact@v4.6.2
+      with:
+        name: AppImage-${{ matrix.arch }}
+        path: 'dist'
+    
+  release:
+      if: ${{ github.ref_name == 'main' }}
+      needs: [build]
+      permissions: write-all
+      runs-on: ubuntu-latest
+
+      steps:
+        - uses: actions/download-artifact@v5.0.0
+          with:
+            pattern: AppImage-*
+            merge-multiple: true
+  
+        - name: Read version and Get date
+          run: |
+            cat ./version
+            echo "VERSION=$(cat ./version)" >> "${GITHUB_ENV}"
+            echo "DATE=$(date +'%Y-%m-%d_%s')" >> "${GITHUB_ENV}"
+
+        - name: Release Artifacts
+          uses: softprops/action-gh-release@v2.4.0
+          with:
+            name: "Android Translation Layer: ${{ env.VERSION }}"
+            tag_name: "${{ env.VERSION }}@${{ env.DATE }}"
+            prerelease: false
+            draft: false
+            generate_release_notes: false
+            make_latest: true
+            files: |
+              *.AppImage*
