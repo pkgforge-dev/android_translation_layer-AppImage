@@ -18,9 +18,12 @@ wget --retry-connrefused --tries=30 "$SHARUN" -O ./quick-sharun
 chmod +x ./quick-sharun
 ./quick-sharun \
 	/usr/bin/android-translation-layer \
+	/usr/lib/java/*                    \
+	/usr/lib/java/*/*                  \
+	/usr/lib/java/*/*/*                \
 	/usr/lib/art/*
 
-cp -rv /usr/lib/java  ./AppDir/lib
+cp -rnv /usr/lib/java ./AppDir/lib
 cp -rv /usr/share/atl ./AppDir/share
 
 # MAKE APPIMAGE WITH URUNTIME
