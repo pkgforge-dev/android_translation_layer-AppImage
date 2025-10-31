@@ -38,25 +38,14 @@ sed -i \
 	/etc/makepkg.conf
 cat /etc/makepkg.conf
 
-AURPKGS="
-	https://aur.archlinux.org/libopensles-standalone
-	https://aur.archlinux.org/skia-sharp-atl
-	https://aur.archlinux.org/bsd-compat-headers
-	https://aur.archlinux.org/art_standalone
-	https://aur.archlinux.org/abionic_translation
-	https://aur.archlinux.org/android_translation_layer-git
-"
-
-for pkg in $AURPKGS; do
-	git clone --depth 1 "$pkg" ./"${pkg##*/}"
-		(
-			cd ./"${pkg##*/}"
-			sed -i -e "s|x86_64|$ARCH|g" ./PKGBUILD
-			cat ./PKGBUILD
-			makepkg -fs --noconfirm
-			ls -la .
-			pacman --noconfirm -U ./*.pkg.tar.*
-		)
-done
+git clone --depth 1 https://aur.archlinux.org/yay-bin.git ./yay
+(
+	cd ./yay
+	makepkg -fs --noconfirm
+	ls -la .
+	pacman --noconfirm -U ./*.pkg.tar.*
+)
+	
+yay -S --noconfirm android_translation_layer-git
 
 pacman -Q android_translation_layer-git | awk '{print $2; exit}' > ~/version
