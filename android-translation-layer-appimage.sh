@@ -16,7 +16,9 @@ export OUTNAME=Android_Translation_Layer-"$VERSION"-anylinux-"$ARCH".AppImage
 # ADD LIBRARIES
 wget --retry-connrefused --tries=30 "$SHARUN" -O ./quick-sharun
 chmod +x ./quick-sharun
-./quick-sharun /usr/bin/android-translation-layer
+./quick-sharun \
+	/usr/bin/android-translation-layer \
+	/usr/lib/art/*
 
 cp -rv /usr/lib/java  ./AppDir/lib
 cp -rv /usr/share/atl ./AppDir/share
