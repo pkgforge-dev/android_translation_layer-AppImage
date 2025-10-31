@@ -24,6 +24,7 @@ chmod +x ./quick-sharun
 	/usr/lib/java/*                    \
 	/usr/lib/java/*/*                  \
 	/usr/lib/java/*/*/*                \
+	/usr/lib/java/*/*/*/*              \
 	/usr/lib/art/*
 
 cp -rnv /usr/lib/java ./AppDir/lib
