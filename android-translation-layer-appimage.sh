@@ -20,6 +20,8 @@ chmod +x ./quick-sharun
 	/usr/bin/android-translation-layer \
 	/usr/bin/addr2line                 \
 	/usr/bin/dex2oat                   \
+	/usr/bin/dalvikvm                  \
+	/usr/bin/dx                        \
 	/usr/lib/libOpenSLES.so*           \
 	/usr/lib/java/*                    \
 	/usr/lib/java/*/*                  \
