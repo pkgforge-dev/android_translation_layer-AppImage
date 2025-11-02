@@ -10,6 +10,7 @@ VERSION="$(cat ~/version)"
 export UPINFO="gh-releases-zsync|${GITHUB_REPOSITORY%/*}|${GITHUB_REPOSITORY#*/}|latest|*$ARCH.AppImage.zsync"
 export DEPLOY_OPENGL=1
 export DEPLOY_GSTREAMER=1
+export DEPLOY_PIPEWIRE=1
 export ICON="https://gitlab.com/android_translation_layer/android_translation_layer/-/raw/master/doc/logo.svg"
 export OUTNAME=Android_Translation_Layer-"$VERSION"-anylinux-"$ARCH".AppImage
 
