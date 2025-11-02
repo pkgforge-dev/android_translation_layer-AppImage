@@ -32,6 +32,19 @@ chmod +x ./quick-sharun
 cp -rnv /usr/lib/java ./AppDir/lib
 cp -rv /usr/share/atl ./AppDir/share
 
+# This application needs a ssl/certs/java/cacerts file
+# It first looks in /etc/ssl/certs/java/cacerts
+# if the file is not there it then looks in XDG_DATA_DIRS
+# Because not all distros have /etc/ssl/certs/java/cacerts
+# We will have to copy the certs into the AppImage instead
+# We cannot use symlinks because not all distros use the same
+# location for this, for example:
+# * archlinux  /etc/ca-certificates/extracted/java-cacerts.jks
+# * fedora     /etc/pki/ca-trust/extracted/java/cacerts
+# * Ubuntu     No idea! Looks like there is no Java KeyStore by default!
+mkdir -p ./AppDir/share/ssl/certs/java
+cp -v /etc/ca-certificates/extracted/java-cacerts.jks ./AppDir/share/ssl/certs/java/cacerts
+
 # MAKE APPIMAGE WITH URUNTIME
 wget --retry-connrefused --tries=30 "$URUNTIME" -O ./uruntime2appimage
 chmod +x ./uruntime2appimage
