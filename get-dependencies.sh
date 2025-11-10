@@ -29,8 +29,10 @@ wget --retry-connrefused --tries=30 "$EXTRA_PACKAGES" -O ./get-debloated-pkgs.sh
 chmod +x ./get-debloated-pkgs.sh
 ./get-debloated-pkgs.sh --add-mesa libxml2-mini opus-mini gdk-pixbuf2-mini
 
-echo "Building android-translation-layer..."
+echo "Getting android-translation-layer..."
 echo "---------------------------------------------------------------"
+wget --retry-connrefused --tries=30 "$PACKAGE_BUILDER" -O ./make-aur-package.sh
+chmod +x ./make-aur-package.sh
 ./make-aur-package.sh --chaotic-aur android_translation_layer-git
 
 pacman -Q android_translation_layer-git | awk '{print $2; exit}' > ~/version
