@@ -25,7 +25,7 @@ jobs:
       image: ghcr.io/pkgforge-dev/archlinux:latest
       options: --privileged --device /dev/fuse
     steps:
-    - uses: actions/checkout@v5
+    - uses: actions/checkout@v6
                       
     - name: Get dependencies
       run: /bin/sh ./get-dependencies.sh
