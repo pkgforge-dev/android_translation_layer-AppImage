@@ -38,4 +38,4 @@ mkdir -p ./AppDir/share/ssl/certs/java
 cp -v /etc/ca-certificates/extracted/java-cacerts.jks ./AppDir/share/ssl/certs/java/cacerts
 
 # Turn AppDir into AppImage
-uruntime2appimage
+quick-sharun --make-appimage
