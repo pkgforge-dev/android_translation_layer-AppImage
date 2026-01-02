@@ -1,0 +1,46 @@
+#!/bin/sh
+
+# atl can place desktop entries on the host, however those are broken here
+# since they contain the full path to the android-translation-layer binary
+# in the appimage which is a random path when the appimage is running
+
+# So we have to fix it by patching those desktop entries
+# ideally ATL should expose an env variable here to allow us to override this
+# https://gitlab.com/android_translation_layer/android_translation_layer/-/blob/master/src/main-executable/main.c#L688
+
+_fix_desktop_entries() {
+	# sanity check
+	for cmd in grep sed sleep; do
+		command -v "$cmd" 1>/dev/null || return 1
+	done
+
+	if [ -z "$APPIMAGE" ] || [ -z "$APPDIR" ]; then
+		return 1
+	fi
+
+	t=0
+	d=${XDG_DATA_HOME:-~/.local/share}/xdg-desktop-portal/applications
+	to_fix=$APPDIR/bin/android-translation-layer
+	fix=$APPIMAGE
+
+	# run for 1 minute
+	while [ "$t" -lt 60 ]; do
+		for f in "$d"/*.desktop; do
+			[ -f "$f" ] || continue
+			if grep -q "$to_fix" "$f"; then
+				# sed -i is not posix
+				if _tmp_sed=$(sed -e "s|$to_fix|$fix|g" "$f"); then
+					echo "$_tmp_sed" > "$f"
+					>&2 echo "[fix-desktop-entries] Fixed launch path in $f"
+				fi
+			fi
+		done
+		t=$(( t + 1 ))
+		sleep 1
+	done
+	return 0
+}
+
+case "$1" in
+	-i|--install) _fix_desktop_entries &;;
+esac
