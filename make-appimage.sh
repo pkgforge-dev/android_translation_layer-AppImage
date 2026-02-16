@@ -12,6 +12,9 @@ export DEPLOY_GSTREAMER=1
 export DEPLOY_PIPEWIRE=1
 export ICON="https://gitlab.com/android_translation_layer/android_translation_layer/-/raw/master/doc/logo.svg"
 
+# something hardcodes /usr/bin/addr2line
+export PATH_MAPPING='/usr/bin/addr2line:${SHARUN_DIR}/bin/addr2line'
+
 # Deploy dependencies
 quick-sharun \
 	/usr/bin/android-translation-layer \
@@ -21,7 +24,7 @@ quick-sharun \
 	/usr/bin/dx                        \
 	/usr/lib/libOpenSLES.so*           \
 	/usr/lib/java                      \
-	/usr/lib/art/*                     \
+	/usr/lib/art                       \
 	/usr/share/atl
 
 # This application needs a ssl/certs/java/cacerts file
