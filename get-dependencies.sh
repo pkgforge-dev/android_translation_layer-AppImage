@@ -6,11 +6,127 @@ ARCH=$(uname -m)
 
 echo "Installing build dependencies..."
 echo "---------------------------------------------------------------"
-pacman -Syu --noconfirm pipewire-audio patchelf
+pacman -Syu --noconfirm \
+	alsa-lib          \
+	cmake             \
+	elfutils          \
+	glib2             \
+	glib2-devel       \
+	graphene          \
+	gtk4              \
+	gtk4-layer-shell  \
+	jdk8-openjdk      \
+	jre-openjdk       \
+	libbsd            \
+	libcap            \
+	libglvnd          \
+	libgudev          \
+	libpng            \
+	libportal         \
+	libsndfile        \
+	libunwind         \
+	lz4               \
+	meson             \
+	openxr            \
+	openssl           \
+	pipewire-audio    \
+	sdl2              \
+	sqlite            \
+	valgrind          \
+	vulkan-headers    \
+	vulkan-icd-loader \
+	wayland-protocols \
+	webkitgtk-6.0     \
+	xz                \
+	zlib              \
+	zip
 
 echo "Installing debloated packages..."
 echo "---------------------------------------------------------------"
-get-debloated-pkgs --add-mesa libxml2-mini opus-mini gdk-pixbuf2-mini librsvg-mini
+get-debloated-pkgs --add-common --prefer-nano ffmpeg-mini
 
-# Comment this out if you need an AUR package
-make-aur-package --chaotic-aur android_translation_layer-git
+# the build needs java 8 to compile the old java code, make sure it
+# is the java/javac that gets used during the builds
+export JAVA_HOME=/usr/lib/jvm/java-8-openjdk
+export PATH="$JAVA_HOME/bin:$PATH"
+
+ATL_SOURCE=https://gitlab.com/android_translation_layer
+
+build_meson_bin() (
+	repo=$1
+	shift
+
+	echo "Building $ATL_SOURCE/$repo..."
+	echo "---------------------------------------------------------------"
+	git clone "$ATL_SOURCE/$repo" ./"$repo"
+	cd ./"$repo"
+
+	meson setup build --prefix=/usr --libdir=lib --buildtype=release "$@"
+	meson compile -C build
+	meson install -C build
+
+	if [ "$repo" = 'android_translation_layer' ]; then
+		git rev-parse --short HEAD > ~/version
+	fi
+)
+
+# wolfssl needs to be built with jni support enabled for art_standalone
+build_wolfssl() (
+	echo "Building wolfssl..."
+	echo "---------------------------------------------------------------"
+	curl -L -o wolfssl.tar.gz "https://github.com/wolfSSL/wolfssl/archive/refs/tags/v5.9.2-stable.tar.gz"
+	tar -xzf wolfssl.tar.gz
+	cd wolfssl-5.9.2-stable
+
+	./autogen.sh
+
+	./configure \
+		--prefix=/usr                 \
+		--libdir=/usr/lib             \
+		--sysconfdir=/etc             \
+		--mandir=/usr/share/man       \
+		--localstatedir=/var          \
+		--enable-shared               \
+		--enable-static               \
+		--enable-reproducible-build   \
+		--disable-opensslall          \
+		--disable-opensslextra        \
+		--enable-aescbc-length-checks \
+		--enable-curve25519           \
+		--enable-ed25519              \
+		--enable-ed25519-stream       \
+		--disable-oldtls              \
+		--enable-base64encode         \
+		--enable-tlsx                 \
+		--enable-scrypt               \
+		--disable-examples            \
+		--enable-keygen               \
+		--enable-wolfssh              \
+		--enable-jni
+
+	make -j"$(nproc)"
+	make install
+)
+
+build_art_standalone() (
+	echo "Building $ATL_SOURCE/art_standalone..."
+	echo "---------------------------------------------------------------"
+	git clone "$ATL_SOURCE/art_standalone" ./art_standalone
+	cd ./art_standalone
+
+	make ____PREFIX=/usr ____LIBDIR=lib -j"$(nproc)"
+	make ____PREFIX=/usr ____INSTALL_ETC=/etc ____LIBDIR=lib install
+)
+
+# art_standalone requires wolfssl and bionic_translation
+build_wolfssl
+build_meson_bin bionic_translation
+build_art_standalone
+build_meson_bin libopensles-standalone
+build_meson_bin android_translation_layer
+
+# java 8 is only needed to build, get rid of it so that the resulting
+# AppImage does not bundle the wrong java runtime
+pacman -Rns --noconfirm jdk8-openjdk
+
+
