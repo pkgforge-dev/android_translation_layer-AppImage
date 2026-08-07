@@ -11,9 +11,6 @@ export DEPLOY_GSTREAMER=1
 export DEPLOY_PIPEWIRE=1
 export ICON="https://gitlab.com/android_translation_layer/android_translation_layer/-/raw/master/doc/logo.svg"
 
-# something hardcodes /usr/bin/addr2line
-export PATH_MAPPING='/usr/bin/addr2line:${SHARUN_DIR}/bin/addr2line'
-
 # Deploy dependencies
 quick-sharun \
 	/usr/bin/android-translation-layer \
@@ -25,6 +22,7 @@ quick-sharun \
 	/usr/lib/java                      \
 	/usr/lib/art                       \
 	/usr/share/atl
+echo 'ATL_BINARY_PATH=$APPIMAGE' >> ./AppDir/.env
 
 # This application needs a ssl/certs/java/cacerts file
 # It first looks in /etc/ssl/certs/java/cacerts
@@ -38,6 +36,8 @@ quick-sharun \
 # * Ubuntu     No idea! Looks like there is no Java KeyStore by default!
 mkdir -p ./AppDir/share/ssl/certs/java
 cp -v /etc/ca-certificates/extracted/java-cacerts.jks ./AppDir/share/ssl/certs/java/cacerts
+
+
 
 # Turn AppDir into AppImage
 quick-sharun --make-appimage
