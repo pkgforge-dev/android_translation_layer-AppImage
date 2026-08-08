@@ -1,0 +1,22 @@
+diff --git a/art/runtime/native_stack_dump.cc b/art/runtime/native_stack_dump.cc
+index 150fa782..62efe52e 100644
+--- a/art/runtime/native_stack_dump.cc
++++ b/art/runtime/native_stack_dump.cc
+@@ -76,7 +76,7 @@ std::string FindAddr2line() {
+       return std::string(env_value) + kAddr2linePrebuiltPath;
+     }
+   }
+-  return std::string("/usr/bin/addr2line");
++  return std::string("addr2line");
+ }
+ 
+ ALWAYS_INLINE
+@@ -140,7 +140,7 @@ static std::unique_ptr<Addr2linePipe> Connect(const std::string& name, const cha
+     close(addr2line_to_caller[0]);
+     close(addr2line_to_caller[1]);
+ 
+-    execv(args[0], const_cast<char* const*>(args));
++    execvp(args[0], const_cast<char* const*>(args));
+     exit(1);
+   } else {
+     close(caller_to_addr2line[0]);

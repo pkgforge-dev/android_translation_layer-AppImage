@@ -1,0 +1,13 @@
+diff --git a/build/core/definitions.mk b/build/core/definitions.mk
+index f81e8a40..6bf5ef93 100644
+--- a/build/core/definitions.mk
++++ b/build/core/definitions.mk
+@@ -2164,7 +2164,7 @@ define transform-classes.jar-to-dex
+ @mkdir -p $(dir $@)
+ $(hide) rm -f $(dir $@)classes*.dex
+ $(hide) $(DX) \
+-    $(if $(findstring windows,$(HOST_OS)),,-JXms16M -JXmx1024M) \
++    $(if $(findstring windows,$(HOST_OS)),,-JXms16M -JXmx4096M) \
+     --dex --output=$(dir $@) \
+     --min-sdk-version=27 \
+     $(if $(NO_OPTIMIZE_DX), \
