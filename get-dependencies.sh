@@ -142,6 +142,9 @@ build_art_standalone() (
 	patch -p1 < ../patches/art-dx-heap.patch
 	# use the host's java cacerts instead of bundling a copy in the AppImage
 	patch -p1 < ../patches/art-wolfssljni-host-cacerts.patch
+	# properly detect ipv6 availability, otherwise all sockets are created
+	# as AF_INET6 and fail with EAFNOSUPPORT on hosts without ipv6
+	patch -p1 < ../patches/art-ipv6-detection.patch
 
 	make ____PREFIX=/usr ____LIBDIR=lib -j"$(nproc)"
 	make ____PREFIX=/usr ____INSTALL_ETC=/etc ____LIBDIR=lib install
