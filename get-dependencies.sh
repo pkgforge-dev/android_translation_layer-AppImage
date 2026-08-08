@@ -110,6 +110,23 @@ build_wolfssl() (
 	make install
 )
 
+# vixl is needed by art_standalone to build the aarch64 dex2oat code,
+# on x86_64 it's not needed so we only build it there, see the atl aports
+# recipe for how the aarch64 build provides it
+build_vixl() (
+	echo "Building vixl..."
+	echo "---------------------------------------------------------------"
+	curl -L -o vixl-7.0.0.tar.gz "https://github.com/Linaro/vixl/archive/refs/tags/7.0.0.tar.gz"
+	tar -xzf vixl-7.0.0.tar.gz
+	cd vixl-7.0.0
+
+	patch -p1 < ../patches/vixl-meson-support.patch
+
+	meson setup build --prefix=/usr --libdir=lib --buildtype=release -Dsimulator=none
+	meson compile -C build
+	meson install -C build
+)
+
 build_art_standalone() (
 	echo "Building $ATL_SOURCE/art_standalone..."
 	echo "---------------------------------------------------------------"
@@ -124,6 +141,9 @@ build_art_standalone() (
 )
 
 # art_standalone requires wolfssl and bionic_translation
+if [ "$ARCH" = 'aarch64' ]; then
+	build_vixl
+fi
 build_wolfssl
 build_meson_bin bionic_translation
 build_art_standalone
