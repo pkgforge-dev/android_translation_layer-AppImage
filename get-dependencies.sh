@@ -49,6 +49,9 @@ get-debloated-pkgs --add-common --prefer-nano ffmpeg-mini
 # is the java/javac that gets used during the builds
 export JAVA_HOME=/usr/lib/jvm/java-8-openjdk
 export PATH="$JAVA_HOME/bin:$PATH"
+# some java tools run out of memory on low memory machines, especially
+# dx when dexing the android core libraries, bump the default heap
+export JAVA_TOOL_OPTIONS=-Xmx4096M
 
 ATL_SOURCE=https://gitlab.com/android_translation_layer
 
@@ -135,6 +138,8 @@ build_art_standalone() (
 
 	# make art resolve addr2line through PATH instead of the hardcoded /usr/bin/addr2line
 	patch -p1 < ../patches/art-addr2line-path.patch
+	# give dx more heap when dexing the core libraries
+	patch -p1 < ../patches/art-dx-heap.patch
 
 	make ____PREFIX=/usr ____LIBDIR=lib -j"$(nproc)"
 	make ____PREFIX=/usr ____INSTALL_ETC=/etc ____LIBDIR=lib install
