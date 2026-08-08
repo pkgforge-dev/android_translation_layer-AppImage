@@ -1,0 +1,44 @@
+diff --git a/external/wolfssljni/src/java/com/wolfssl/provider/jsse/WolfSSLTrustManager.java b/external/wolfssljni/src/java/com/wolfssl/provider/jsse/WolfSSLTrustManager.java
+index 7da48fbf..b3087a3d 100644
+--- a/external/wolfssljni/src/java/com/wolfssl/provider/jsse/WolfSSLTrustManager.java
++++ b/external/wolfssljni/src/java/com/wolfssl/provider/jsse/WolfSSLTrustManager.java
+@@ -178,6 +178,39 @@ public class WolfSSLTrustManager extends TrustManagerFactorySpi {
+                         }
+                     }
+ 
++                    /* trying: load the host's PEM CA bundle, which is
++                     * available on every distro, since not all of them
++                     * (e.g. NixOS, Alpine) ship a JKS cacerts file.
++                     * honor SSL_CERT_FILE, which sharun points to a valid
++                     * bundle, otherwise use the standard debian path */
++                    if (systemCertsFound == false) {
++                        String pemBundlePath = System.getenv("SSL_CERT_FILE");
++                        File f_pem;
++                        if (pemBundlePath != null && !pemBundlePath.isEmpty()) {
++                            f_pem = new File(pemBundlePath);
++                        } else {
++                            f_pem = new File("/etc/ssl/certs/ca-certificates.crt");
++                        }
++                        if (f_pem.exists()) {
++                            try {
++                                CertificateFactory cf = CertificateFactory.getInstance("X.509");
++                                FileInputStream fis = new FileInputStream(f_pem);
++                                java.util.Collection<? extends Certificate> pemCerts = cf.generateCertificates(fis);
++                                fis.close();
++                                for (Certificate pemCert : pemCerts) {
++                                    certs.setCertificateEntry("alias" + aliasCnt, pemCert);
++                                    aliasCnt++;
++                                }
++                                WolfSSLDebug.log(getClass(), WolfSSLDebug.INFO,
++                                    "Loaded " + pemCerts.size() + " certs from " + f_pem.getAbsolutePath());
++                                systemCertsFound = true;
++                            } catch (Exception e) {
++                                WolfSSLDebug.log(getClass(), WolfSSLDebug.ERROR,
++                                    "Failed to load PEM bundle " + f_pem.getAbsolutePath() + ": " + e.getMessage());
++                            }
++                        }
++                    }
++
+                     /* try to load trusted system certs if possible */
+                     if (systemCertsFound == false && javaHome != null) {
+                         if (!javaHome.endsWith("/") &&
