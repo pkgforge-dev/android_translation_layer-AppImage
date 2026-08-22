@@ -3,7 +3,7 @@
 # android_translation_layer-AppImage 🐧
 
 [![GitHub Downloads](https://img.shields.io/github/downloads/pkgforge-dev/android_translation_layer-AppImage/total?logo=github&label=GitHub%20Downloads)](https://github.com/pkgforge-dev/android_translation_layer-AppImage/releases/latest)
-[![CI Build Status](https://github.com//pkgforge-dev/android_translation_layer-AppImage/actions/workflows/appimage.yml/badge.svg)](https://github.com/pkgforge-dev/android_translation_layer-AppImage/releases/latest)
+[![CI Build Status](https://github.com/pkgforge-dev/android_translation_layer-AppImage/actions/workflows/appimage.yml/badge.svg)](https://github.com/pkgforge-dev/android_translation_layer-AppImage/releases/latest)
 [![Latest Stable Release](https://img.shields.io/github/v/release/pkgforge-dev/android_translation_layer-AppImage)](https://github.com/pkgforge-dev/android_translation_layer-AppImage/releases/latest)
 
 <p align="center">
